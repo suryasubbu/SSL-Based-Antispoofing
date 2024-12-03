@@ -15,7 +15,7 @@ import wav2clip  # Added wav2clip import
 import pickle
 from speechbrain.inference.speaker import EncoderClassifier 
 # Check if GPU is available and set device accordingly
-device = torch.device("cuda:2" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 
 # Load Models and Processors as Public Variables
