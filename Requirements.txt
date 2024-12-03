@@ -1,0 +1,11 @@
+transformers
+librosa
+torchaudio
+torch
+pandas
+numpy
+funasr
+tensorflow_hub
+tensorflow
+wav2clip
+speechbrain
