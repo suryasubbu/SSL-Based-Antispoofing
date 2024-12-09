@@ -19,7 +19,7 @@ print(f"Using device: {device}")
 #     "pase", "pase_plus", "distilhubert", "hubert_large_ll60k", "wav2vec2_large_ll60k"
 # ]
 s3prl_model_names = [
- "wav2vec2_large_ll60k"
+ "wavlablm_ms_40k"
 ]
 # Load all S3PRL models once
 models_s3prl = {}

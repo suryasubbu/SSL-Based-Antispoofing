@@ -75,8 +75,8 @@ def visualize_umap(data, labels):
 # Main execution
 if __name__ == "__main__":
     base_directory = "/data/Deep_Fake_Data/Raw_data/Features_superb"
-    feature_type = "wav2vec2_large_ll60k"
-    speaker_no = "p234"
+    feature_type = "wavlablm_ms_40k"
+    speaker_no = "p236"
     train_type = "train"
 
     data_df = read_pickle_files(base_directory, feature_type, speaker_no, train_type)
