@@ -6,18 +6,21 @@ import os
 import pickle
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
+import concurrent
 
 # Check if GPU is available and set device accordingly
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 
 # List of S3PRL upstream model names to iterate over
+# s3prl_model_names = [
+#     "apc", "hubert", "wav2vec2", "tera", "mockingjay", "vq_apc", "vq_wav2vec",
+#     "wav2vec", "decoar", "decoar2", "npc", "audio_albert", "modified_cpc",
+#     "pase", "pase_plus", "distilhubert", "hubert_large_ll60k", "wav2vec2_large_ll60k"
+# ]
 s3prl_model_names = [
-    "apc", "hubert", "wav2vec2", "tera", "mockingjay", "vq_apc", "vq_wav2vec",
-    "wav2vec", "decoar", "decoar2", "npc", "audio_albert", "modified_cpc",
-    "pase", "pase_plus", "distilhubert", "hubert_large_ll60k", "wav2vec2_large_ll60k"
+ "wav2vec2_large_ll60k"
 ]
-
 # Load all S3PRL models once
 models_s3prl = {}
 for model_name in s3prl_model_names:
@@ -66,7 +69,7 @@ def process_speaker_for_model(model_name, model, speaker):
             continue
 
         # Create the output directory similar to input audio directory
-        output_dir = os.path.join(f"/data/Deep_Fake_Data/Raw_data/Features_x/DFADD/{speaker}/train/{folder}/{model_name}")
+        output_dir = os.path.join(f"/data/Deep_Fake_Data/Raw_data/Features_superb/DFADD/{speaker}/train/{folder}/{model_name}")
         os.makedirs(output_dir, exist_ok=True)
 
         # List all wave files in the current train folder
