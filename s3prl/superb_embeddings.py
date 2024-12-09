@@ -50,6 +50,7 @@ def extract_s3prl_features(model, file_path):
         all_hs, all_hs_len = model(wavs.to(device), wavs_len.to(device))
 
     # Compute mean embedding over axis=1
+    print(all_hs[0].shape)
     embeddings = all_hs[0].mean(dim=1).squeeze().cpu().numpy()
     return embeddings
 
