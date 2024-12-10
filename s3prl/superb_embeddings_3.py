@@ -135,7 +135,7 @@ def extract_s3prl_features(model, file_path):
         all_hs, all_hs_len = model(wavs.to(device), wavs_len.to(device))
 
     # Compute mean embedding over axis=1
-    print(all_hs[0].shape)
+    # print(all_hs[0].shape)
     embeddings = all_hs[0].mean(dim=1).squeeze().cpu().numpy()
     return embeddings
 
@@ -161,7 +161,7 @@ def process_speaker_for_model(model_name, model, speaker):
         # List all wave files in the current train folder
         wave_files = np.sort([f for f in os.listdir(train_dir) if f.endswith(('.wav', '.flac'))])
 
-        print(f"{model_name} processing: {folder}")
+        # print(f"{model_name} processing: {folder}")
 
         for f in wave_files:
             file_path = os.path.join(train_dir, f)
@@ -181,7 +181,7 @@ def main():
     speakers = get_subfolders(directory_path)
 
     # Use ThreadPoolExecutor to parallelize feature extraction
-    for speaker in speakers[0:2]:
+    for speaker in speakers:
         try:
             with ThreadPoolExecutor() as executor:
                 futures = []
@@ -197,6 +197,6 @@ def main():
         except Exception as e:
             print(f"Exception occurred while processing speaker {speaker}: {e}")
             continue
-
+        print("speaker_done",speaker)
 if __name__ == "__main__":
     main()

@@ -43,7 +43,7 @@ def read_pickle_files(base_directory, feature_type, speaker_no, train_type):
     return pd.DataFrame({'features': data, 'label': labels})
 
 
-def visualize_umap(data, labels, feature_type, output_directory):
+def visualize_umap(data, labels, feature_type, output_directory,model_no):
     """
     Apply UMAP and save the plots using Plotly.
 
@@ -81,7 +81,7 @@ def visualize_umap(data, labels, feature_type, output_directory):
     # print(f"Plot saved to {html_output_path}")
 
     # Save the plot as PNG
-    png_output_path = os.path.join(output_directory, f'{feature_type}_umap.png')
+    png_output_path = os.path.join(output_directory, f'{model_no}_{feature_type}_umap.png')
     fig.write_image(png_output_path)
     print(f"Plot saved to {png_output_path}")
 
@@ -174,16 +174,19 @@ if __name__ == "__main__":
   "byol_s_resnetish34"
   "vggish",
   "passt_base"]  # List of feature types
-    speaker_no = "p236"
+    speaker_no = "p316"
     train_type = "train"
-    output_directory = "/data/Deep_Fake_Data/umap_plots"  # Directory to save plots
-
+    output_directory = f"/data/Deep_Fake_Data/umap_plots/{speaker_no}"  # Directory to save plots
+    import os
+    os.makedirs(output_directory)
+    i=0
     for feature_type in feature_types:
         print(f"Processing feature type: {feature_type}")
 
         data_df = read_pickle_files(base_directory, feature_type, speaker_no, train_type)
 
         if not data_df.empty:
-            visualize_umap(data_df, data_df['label'], feature_type, output_directory)
+            visualize_umap(data_df, data_df['label'], feature_type, output_directory,str(i).zfill(3))
+            i=i+1
         else:
             print(f"No data found for feature type: {feature_type}")

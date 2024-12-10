@@ -181,7 +181,7 @@ def main():
     speakers = get_subfolders(directory_path)
 
     # Use ThreadPoolExecutor to parallelize feature extraction
-    for speaker in speakers[0:2]:
+    for speaker in speakers:
         try:
             with ThreadPoolExecutor() as executor:
                 futures = []
