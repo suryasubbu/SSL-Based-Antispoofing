@@ -21,49 +21,49 @@ print(f"Using device: {device}")
 # Load Models and Processors as Public Variables
 print("Loading Models...")
 
-# Load HuBERT model
-processor_hubert = AutoProcessor.from_pretrained("facebook/hubert-large-ls960-ft")
-model_hubert = HubertModel.from_pretrained("facebook/hubert-large-ls960-ft").to(device)
+# # Load HuBERT model
+# processor_hubert = AutoProcessor.from_pretrained("facebook/hubert-large-ls960-ft")
+# model_hubert = HubertModel.from_pretrained("facebook/hubert-large-ls960-ft").to(device)
 
 
 
 processor_wavlm_large = AutoFeatureExtractor.from_pretrained("microsoft/wavlm-large")
 model_wavlm_large = AM.from_pretrained("microsoft/wavlm-large").to(device)
 
-# Load Wav2Vec2.0 model facebook/wav2vec2-base-960h
-processor_wav2vec2 = AutoProcessor.from_pretrained("facebook/wav2vec2-large-960h")
-model_wav2vec2 = Wav2Vec2Model.from_pretrained("facebook/wav2vec2-large-960h").to(device)
+# # Load Wav2Vec2.0 model facebook/wav2vec2-base-960h
+# processor_wav2vec2 = AutoProcessor.from_pretrained("facebook/wav2vec2-large-960h")
+# model_wav2vec2 = Wav2Vec2Model.from_pretrained("facebook/wav2vec2-large-960h").to(device)
 
 
 
 # Load Wav2Vec2.0xls model
-processor_wav2vec2_xls = Wav2Vec2FeatureExtractor.from_pretrained("facebook/wav2vec2-large-xlsr-53")
-model_wav2vec2_xls = Wav2Vec2Model.from_pretrained("facebook/wav2vec2-large-xlsr-53").to(device)
+# processor_wav2vec2_xls = Wav2Vec2FeatureExtractor.from_pretrained("facebook/wav2vec2-large-xlsr-53")
+# model_wav2vec2_xls = Wav2Vec2Model.from_pretrained("facebook/wav2vec2-large-xlsr-53").to(device)
 
-# Load GCT model
-processor_gct = SeamlessM4TFeatureExtractor.from_pretrained("facebook/w2v-bert-2.0")
+# # Load GCT model
+# processor_gct = SeamlessM4TFeatureExtractor.from_pretrained("facebook/w2v-bert-2.0")
 
 
-# Load YamNet model
-yamnet_model_handle = "https://tfhub.dev/google/yamnet/1"
-yamnet_model = hub.load(yamnet_model_handle)
+# # Load YamNet model
+# yamnet_model_handle = "https://tfhub.dev/google/yamnet/1"
+# yamnet_model = hub.load(yamnet_model_handle)
 
-# Load UniSpeech-SAT model
+# # Load UniSpeech-SAT model
 processor_unispeech_sat = AutoProcessor.from_pretrained("microsoft/unispeech-sat-base-100h-libri-ft")
 model_unispeech_sat = UniSpeechSatModel.from_pretrained("microsoft/unispeech-sat-base-100h-libri-ft").to(device)
 
-# Load wav2clip model
-model_wav2clip = wav2clip.get_model()
+# # Load wav2clip model
+# model_wav2clip = wav2clip.get_model()
 
-# Load Data2VecAudio model
-processor_data2vec = AutoProcessor.from_pretrained("facebook/data2vec-audio-base-960h")
-model_data2vec = Data2VecAudioModel.from_pretrained("facebook/data2vec-audio-base-960h").to(device)
+# # Load Data2VecAudio model
+# processor_data2vec = AutoProcessor.from_pretrained("facebook/data2vec-audio-base-960h")
+# model_data2vec = Data2VecAudioModel.from_pretrained("facebook/data2vec-audio-base-960h").to(device)
 
-# Load X-Vector model from SpeechBrain (updated)
-classifier = EncoderClassifier.from_hparams(
-    source="speechbrain/spkrec-xvect-voxceleb",
-    savedir="pretrained_models/spkrec-xvect-voxceleb"
-)
+# # Load X-Vector model from SpeechBrain (updated)
+# classifier = EncoderClassifier.from_hparams(
+#     source="speechbrain/spkrec-xvect-voxceleb",
+#     savedir="pretrained_models/spkrec-xvect-voxceleb"
+# )
 
 # Define Feature Extraction Functions
 def extract_xvector_features(file_path):
@@ -156,26 +156,26 @@ def extract_data2vec_features(file_path):
 
 # Corresponding feature extraction functions
 feature_extraction_functions = {
-    "HuBERT": extract_hubert_features,
-    "WavLM_large": extract_wavlm_large_features,
-    "W2v_xls": extract_wav2vec2_xls_features,
-    "YamNet": extract_yamnet_features,
-    "UniSpeech-SAT": extract_unispeech_sat_features,
-    "wav2clip": extract_wav2clip_features,
-    "Data2Vec": extract_data2vec_features,
-    "X-Vector": extract_xvector_features
-}
+    # "HuBERT": extract_hubert_features,
+    "wavlmlarge": extract_wavlm_large_features,
+    # "w2vxls": extract_wav2vec2_xls_features,
+#     "YamNet": extract_yamnet_features,
+     "unispeech": extract_unispeech_sat_features,
+#     "wav2clip": extract_wav2clip_features,
+#     "Data2Vec": extract_data2vec_features,
+#     "X-Vector": extract_xvector_features
+ }
 
 def get_subfolders(directory):
     subfolders = [folder.name for folder in os.scandir(directory) if folder.is_dir()]
     return subfolders
 
 # Example usage
-directory_path = '/data/Deep_Fake_Data/Raw_data/DFADD'
+directory_path = '/data/FF_V2/Data'
 speakers = get_subfolders(directory_path)
 
 def process_speaker_for_model(model_name, feature_extractor, speaker):
-    input_base_path = f"/data/Deep_Fake_Data/Raw_data/DFADD/{speaker}/train"
+    input_base_path = f"/data/FF_V2/Data/{speaker}/train"
 
     deepfake_folders =get_subfolders(input_base_path)
 
@@ -186,7 +186,7 @@ def process_speaker_for_model(model_name, feature_extractor, speaker):
             continue
 
         # Create the output directory similar to input audio directory
-        output_dir = os.path.join(f"/data/Deep_Fake_Data/Raw_data/Features_x/DFADD/{speaker}/train/{folder}/{model_name}")
+        output_dir = os.path.join(f"/data/FF_V2/Features/{speaker}/train/{model_name}_{folder}/")
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
@@ -196,15 +196,17 @@ def process_speaker_for_model(model_name, feature_extractor, speaker):
         print(f"{model_name} processing: {folder}")
 
         for f in wave_files:
-            file_path = os.path.join(train_dir, f)
+            try:
+                file_path = os.path.join(train_dir, f)
 
-            features = feature_extractor(file_path)
-            # Flatten the features and save them as a pickle file
-            features_flattened = features.flatten()
-            output_file_path = os.path.join(output_dir, f"{os.path.splitext(f)[0]}.pkl")
-            with open(output_file_path, 'wb') as handle:
-                pickle.dump(features_flattened, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
+                features = feature_extractor(file_path)
+                # Flatten the features and save them as a pickle file
+                features_flattened = features.flatten()
+                output_file_path = os.path.join(output_dir, f"{os.path.splitext(f)[0]}.pkl")
+                with open(output_file_path, 'wb') as handle:
+                    pickle.dump(features_flattened, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            except:
+                continue
 # Use ThreadPoolExecutor to parallelize feature extraction
 for speaker in speakers:
     try:
@@ -219,6 +221,7 @@ for speaker in speakers:
                     future.result()
                 except Exception as exc:
                     print(f"Generated an exception: {exc}")
+                    continue
     except Exception as e:
         print(f"Exception occurred while processing speaker {speaker}: {e}")
         continue

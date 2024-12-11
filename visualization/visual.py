@@ -171,14 +171,15 @@ if __name__ == "__main__":
   "byol_a_512",
   "byol_s_default",
   "byol_s_cvt",
-  "byol_s_resnetish34"
+  "byol_s_resnetish34",
   "vggish",
   "passt_base"]  # List of feature types
-    speaker_no = "p316"
+    speaker_no = "p278"
     train_type = "train"
     output_directory = f"/data/Deep_Fake_Data/umap_plots/{speaker_no}"  # Directory to save plots
     import os
-    os.makedirs(output_directory)
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
     i=0
     for feature_type in feature_types:
         print(f"Processing feature type: {feature_type}")
