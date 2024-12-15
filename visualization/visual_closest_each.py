@@ -3,7 +3,7 @@ import pickle
 import pandas as pd
 import umap
 import plotly.express as px
-
+from scipy.spatial.distance import euclidean
 
 def read_pickle_files(base_directory, feature_type, speaker_no, train_type):
     """
@@ -42,10 +42,48 @@ def read_pickle_files(base_directory, feature_type, speaker_no, train_type):
     # Combine into a DataFrame
     return pd.DataFrame({'features': data, 'label': labels})
 
-
-def visualize_umap(data, labels, feature_type, output_directory,model_no):
+def calculate_distances_from_fixed_label(visualization_df, fixed_label):
     """
-    Apply UMAP and save the plots using Plotly.
+    Calculate distances from each fixed label point to all other clusters and their average.
+
+    Parameters:
+        visualization_df (DataFrame): DataFrame containing UMAP features and labels.
+        fixed_label (str): The fixed label to calculate distances from.
+
+    Returns:
+        dict: A dictionary containing distances and the average distance.
+    """
+    # Ensure the fixed label is present
+    if fixed_label not in visualization_df['label'].unique():
+        print(f"Fixed label '{fixed_label}' not found in the data.")
+        return None
+
+    # Separate the fixed label points
+    fixed_label_points = visualization_df[visualization_df['label'] == fixed_label][['UMAP1', 'UMAP2']].values
+
+    # Initialize a dictionary to store all distances for averaging
+    all_distances = {f"Distance_{fixed_label}_{other_label}": [] for other_label in visualization_df['label'].unique() if other_label != fixed_label}
+
+    # Calculate distances for each fixed label point
+    for fixed_point in fixed_label_points:
+        for other_label in visualization_df['label'].unique():
+            if other_label == fixed_label:
+                continue
+            other_label_points = visualization_df[visualization_df['label'] == other_label][['UMAP1', 'UMAP2']].values
+            # Find the minimum distance to this label
+            min_distance = min(euclidean(fixed_point, other_point) for other_point in other_label_points)
+            all_distances[f"Distance_{fixed_label}_{other_label}"].append(min_distance)
+
+    # Compute the average distances for each label
+    average_distances = {key: sum(values) / len(values) for key, values in all_distances.items()}
+    average_distances['Average_Distance'] = sum(average_distances.values()) / len(average_distances) if average_distances else 0
+
+    return average_distances
+
+
+def visualize_umap(data, labels, feature_type, output_directory, model_no, results_df, speaker_no):
+    """
+    Apply UMAP and save the plots using Plotly, while calculating distances from a fixed label cluster.
 
     Parameters:
         data (DataFrame): Data with features.
@@ -64,6 +102,18 @@ def visualize_umap(data, labels, feature_type, output_directory,model_no):
         'label': labels
     })
 
+    # Calculate distances from fixed label
+    fixed_label = "Original"  # Replace with your desired fixed label
+    distances = calculate_distances_from_fixed_label(visualization_df, fixed_label)
+    if distances:
+        print(f"Feature Type: {feature_type}")
+        print(f"Distances from {fixed_label}: {distances}")
+
+        # Add distances to results DataFrame
+        distance_row = {"Feature_Type": feature_type, "Speaker": speaker_no}
+        distance_row.update(distances)
+        results_df.append(distance_row)
+
     # Plot using Plotly
     fig = px.scatter(
         visualization_df, 
@@ -74,17 +124,21 @@ def visualize_umap(data, labels, feature_type, output_directory,model_no):
         labels={'label': 'Label'}
     )
 
-    # Save the plot as HTML
-    # os.makedirs(output_directory, exist_ok=True)
-    # html_output_path = os.path.join(output_directory, f'{feature_type}_umap.html')
-    # fig.write_html(html_output_path)
-    # print(f"Plot saved to {html_output_path}")
+    # Mark closest points for each label
+    for label in visualization_df['label'].unique():
+        label_points = visualization_df[visualization_df['label'] == label]
+        closest_point = label_points[['UMAP1', 'UMAP2']].iloc[0]  # Arbitrary selection for clarity
+        fig.add_scatter(x=[closest_point['UMAP1']], y=[closest_point['UMAP2']],
+                        mode='markers+text',
+                        marker=dict(size=10, symbol='x', color='black'),
+                        text=label,
+                        textposition='top center',
+                        name=f'Closest_{label}')
 
     # Save the plot as PNG
     png_output_path = os.path.join(output_directory, f'{model_no}_{feature_type}_umap.png')
     fig.write_image(png_output_path)
     print(f"Plot saved to {png_output_path}")
-
 
 # Main execution
 if __name__ == "__main__":
@@ -172,37 +226,43 @@ if __name__ == "__main__":
   "byol_s_default",
   "byol_s_cvt",
   "byol_s_resnetish34",
-  "vggish",
   "passt_base"]  # List of feature types
     speaker_nos = [
-"p278",
-"p376",
-"p265",
-"p318",
-"s5",
-"p272",
-"p306",
-"p239",
-"p287",
-"p262",
-"p288",
-"p284",
-"p360",
-"p251",
-"p312",
+    "p278",
+    "p376",
+    "p265",
+    "p318",
+    "p272",
+    "p306",
+    "p239",
+    "p287",
+    "p262",
+    "p288",
+    "p284",
+    "p360",
+    "p251",
+    "p312",
 "p282",]
-for speaker_no in speaker_nos:
+
+    results = []
+
+    for speaker_no in speaker_nos:
         train_type = "train"
-        output_directory = f"/data/Deep_Fake_Data/umap_plots/{speaker_no}"  # Directory to save plots
-        import os
+        output_directory = f"/data/Deep_Fake_Data/umap_plots_closest/{speaker_no}"  # Directory to save plots
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
         for idx, feature_type in enumerate(feature_types):
-            print(f"Processing feature type: {feature_type}")
+            print(f"Processing feature type: {feature_type}",speaker_no)
 
             data_df = read_pickle_files(base_directory, feature_type, speaker_no, train_type)
 
             if not data_df.empty:
-                visualize_umap(data_df, data_df['label'], feature_type, output_directory,str(idx).zfill(3))
+                visualize_umap(data_df, data_df['label'], feature_type, output_directory, str(idx).zfill(3), results, speaker_no)
             else:
                 print(f"No data found for feature type: {feature_type}")
+
+    # Convert results to DataFrame and save
+    results_df = pd.DataFrame(results)
+    results_output_path = os.path.join(base_directory, "umap_distances_closest_each_summary.csv")
+    results_df.to_csv(results_output_path, index=False)
+    print(f"Results saved to {results_output_path}")

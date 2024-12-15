@@ -3,7 +3,7 @@ import pickle
 import pandas as pd
 import umap
 import plotly.express as px
-
+from scipy.spatial.distance import euclidean
 
 def read_pickle_files(base_directory, feature_type, speaker_no, train_type):
     """
@@ -42,10 +42,42 @@ def read_pickle_files(base_directory, feature_type, speaker_no, train_type):
     # Combine into a DataFrame
     return pd.DataFrame({'features': data, 'label': labels})
 
-
-def visualize_umap(data, labels, feature_type, output_directory,model_no):
+def calculate_distances_from_fixed_label(visualization_df, fixed_label):
     """
-    Apply UMAP and save the plots using Plotly.
+    Calculate distances from a fixed label cluster to all other clusters and their average.
+
+    Parameters:
+        visualization_df (DataFrame): DataFrame containing UMAP features and labels.
+        fixed_label (str): The fixed label to calculate distances from.
+
+    Returns:
+        dict: A dictionary containing distances and the average distance.
+    """
+    # Calculate centroids for each cluster
+    centroids = visualization_df.groupby('label')[['UMAP1', 'UMAP2']].mean()
+
+    # Ensure the fixed label is present
+    if fixed_label not in centroids.index:
+        print(f"Fixed label '{fixed_label}' not found in the data.")
+        return None
+
+    # Calculate distances from the fixed label to all other clusters
+    fixed_label_centroid = centroids.loc[fixed_label]
+    distances = {
+        f"Distance_{fixed_label}_{other_label}": euclidean(fixed_label_centroid, other_centroid)
+        for other_label, other_centroid in centroids.iterrows()
+        if other_label != fixed_label
+    }
+
+    # Calculate average distance
+    average_distance = sum(distances.values()) / len(distances) if distances else 0
+    distances['Average_Distance'] = average_distance
+
+    return distances, centroids
+
+def visualize_umap(data, labels, feature_type, output_directory, model_no, results_df, speaker_no):
+    """
+    Apply UMAP and save the plots using Plotly, while calculating distances from a fixed label cluster.
 
     Parameters:
         data (DataFrame): Data with features.
@@ -64,6 +96,18 @@ def visualize_umap(data, labels, feature_type, output_directory,model_no):
         'label': labels
     })
 
+    # Calculate distances from fixed label
+    fixed_label = "Original"  # Replace with your desired fixed label
+    distances, centroids = calculate_distances_from_fixed_label(visualization_df, fixed_label)
+    if distances:
+        print(f"Feature Type: {feature_type}")
+        print(f"Distances from {fixed_label}: {distances}")
+
+        # Add distances to results DataFrame
+        distance_row = {"Feature_Type": feature_type, "Speaker": speaker_no}
+        distance_row.update(distances)
+        results_df.append(distance_row)
+
     # Plot using Plotly
     fig = px.scatter(
         visualization_df, 
@@ -74,18 +118,19 @@ def visualize_umap(data, labels, feature_type, output_directory,model_no):
         labels={'label': 'Label'}
     )
 
-    # Save the plot as HTML
-    # os.makedirs(output_directory, exist_ok=True)
-    # html_output_path = os.path.join(output_directory, f'{feature_type}_umap.html')
-    # fig.write_html(html_output_path)
-    # print(f"Plot saved to {html_output_path}")
+    # Add centroids to the plot
+    for label, centroid in centroids.iterrows():
+        fig.add_scatter(x=[centroid['UMAP1']], y=[centroid['UMAP2']],
+                        mode='markers+text',
+                        marker=dict(size=10, symbol='x', color='black'),
+                        text=label,
+                        textposition='top center',
+                        name=f'Centroid_{label}')
 
     # Save the plot as PNG
     png_output_path = os.path.join(output_directory, f'{model_no}_{feature_type}_umap.png')
     fig.write_image(png_output_path)
     print(f"Plot saved to {png_output_path}")
-
-
 # Main execution
 if __name__ == "__main__":
     base_directory = "/data/Deep_Fake_Data/Raw_data/Features_superb"
@@ -172,14 +217,12 @@ if __name__ == "__main__":
   "byol_s_default",
   "byol_s_cvt",
   "byol_s_resnetish34",
-  "vggish",
   "passt_base"]  # List of feature types
     speaker_nos = [
 "p278",
 "p376",
 "p265",
 "p318",
-"s5",
 "p272",
 "p306",
 "p239",
@@ -191,18 +234,25 @@ if __name__ == "__main__":
 "p251",
 "p312",
 "p282",]
-for speaker_no in speaker_nos:
+    results = []
+
+    for speaker_no in speaker_nos:
         train_type = "train"
-        output_directory = f"/data/Deep_Fake_Data/umap_plots/{speaker_no}"  # Directory to save plots
-        import os
+        output_directory = f"/data/Deep_Fake_Data/umap_plots_centroids/{speaker_no}"  # Directory to save plots
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
         for idx, feature_type in enumerate(feature_types):
-            print(f"Processing feature type: {feature_type}")
+            print(f"Processing feature type: {feature_type}",speaker_no)
 
             data_df = read_pickle_files(base_directory, feature_type, speaker_no, train_type)
 
             if not data_df.empty:
-                visualize_umap(data_df, data_df['label'], feature_type, output_directory,str(idx).zfill(3))
+                visualize_umap(data_df, data_df['label'], feature_type, output_directory, str(idx).zfill(3), results, speaker_no)
             else:
                 print(f"No data found for feature type: {feature_type}")
+
+    # Convert results to DataFrame and save
+    results_df = pd.DataFrame(results)
+    results_output_path = os.path.join(base_directory, "umap_distances_summary.csv")
+    results_df.to_csv(results_output_path, index=False)
+    print(f"Results saved to {results_output_path}")
