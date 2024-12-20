@@ -145,7 +145,7 @@ def get_subfolders(directory):
 
 # Function to process a speaker for a given model
 def process_speaker_for_model(model_name, model, speaker):
-    input_base_path = f"/data/Deep_Fake_Data/Raw_data/CODEC1/{speaker}/train"
+    input_base_path = f"/data/Deep_Fake_Data/Raw_data/CODEC2/{speaker}/train"
     deepfake_folders = get_subfolders(input_base_path)
 
     for folder in deepfake_folders:
@@ -155,7 +155,7 @@ def process_speaker_for_model(model_name, model, speaker):
             continue
 
         # Create the output directory similar to input audio directory
-        output_dir = os.path.join(f"/data/Deep_Fake_Data/Raw_data/Features_superb/CODEC1/{speaker}/train/{folder}/{model_name}")
+        output_dir = os.path.join(f"/data/Deep_Fake_Data/Raw_data/Features_superb/CODEC2/{speaker}/train/{folder}/{model_name}")
         os.makedirs(output_dir, exist_ok=True)
 
         # List all wave files in the current train folder
@@ -182,9 +182,9 @@ def process_speaker_for_model(model_name, model, speaker):
 # Main processing loop
 def main():
     # Directory containing speaker subfolders
-    directory_path = '/data/Deep_Fake_Data/Raw_data/CODEC1'
-    speakers = get_subfolders(directory_path)
-
+    directory_path = '/data/Deep_Fake_Data/Raw_data/CODEC2'
+    # speakers = get_subfolders(directory_path)
+    speakers = ["p282","p351"]
     # Use ThreadPoolExecutor to parallelize feature extraction
     for speaker in speakers:
         try:

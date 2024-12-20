@@ -19,39 +19,33 @@ print(f"Using device: {device}")
 #     "pase", "pase_plus", "distilhubert", "hubert_large_ll60k", "wav2vec2_large_ll60k"
 # ]
 s3prl_model_names = [
-#   "mockingjay",
-#   "mockingjay_origin",
-#   "mockingjay_100hr",
-#   "mockingjay_960hr",
-#   "mockingjay_logMelBase_T_AdamW_b32_200k_100hr",
-#   "mockingjay_logMelBase_T_AdamW_b32_1m_960hr_drop1",
-#   "mockingjay_logMelLinearLarge_T_AdamW_b32_500k_360hr_drop1",
-#   "tera",
-#   "tera_100hr",
-#   "tera_logMelBase_T_F_M_AdamW_b32_200k_100hr",
-#   "tera_logMelBase_T_F_AdamW_b32_1m_960hr_drop1",
-#   "audio_albert",
-#   "audio_albert_960hr",
-#   "audio_albert_logMelBase_T_share_AdamW_b32_1m_960hr_drop1",
-#   "apc",
-#   "apc_360hr",
-#   "apc_960hr",
-#   "vq_apc",
-#   "vq_apc_360hr",
-#   "vq_apc_960hr",
-#   "npc",
-#   "npc_360hr",
-#   "npc_960hr",
-#   "modified_cpc",
-#   "decoar",
-#   "decoar_layers",
-#   "decoar2",
-#   "wav2vec",
-#   "wav2vec_large",
+  "mockingjay_origin",
+  "mockingjay_100hr",
+  "mockingjay_960hr",
+  "mockingjay_logMelBase_T_AdamW_b32_200k_100hr",
+  "mockingjay_logMelBase_T_AdamW_b32_1m_960hr_drop1",
+  "mockingjay_logMelLinearLarge_T_AdamW_b32_500k_360hr_drop1",
+  "tera_100hr",
+  "tera_logMelBase_T_F_M_AdamW_b32_200k_100hr",
+  "tera_logMelBase_T_F_AdamW_b32_1m_960hr_drop1",
+  "audio_albert_960hr",
+  "audio_albert_logMelBase_T_share_AdamW_b32_1m_960hr_drop1",
+  "apc_360hr",
+  "apc_960hr",
+  "vq_apc_360hr",
+  "vq_apc_960hr",
+  "npc_360hr",
+  "npc_960hr",
+  "modified_cpc",
+  "decoar_layers",
+  "decoar2",
+  "wav2vec_large",
+#   "vq_wav2vec",
 #   "vq_wav2vec_gumbel",
 #   "vq_wav2vec_kmeans",
 #   "discretebert",
 #   "vq_wav2vec_kmeans_roberta",
+#   "wav2vec2",
 #   "wav2vec2_base_960",
 #   "wav2vec2_large_960",
 #   "wav2vec2_large_ll60k",
@@ -62,47 +56,49 @@ s3prl_model_names = [
 #   "wav2vec2_base_s2st_en_librilight",
 #   "wav2vec2_conformer_large_s2st_es_voxpopuli",
 #   "wav2vec2_conformer_large_s2st_en_librilight",
-  "xlsr_53",
-  "xls_r_300m",
-  "xls_r_1b",
-  "xls_r_2b",
-  "hubert_base",
-  "hubert_large_ll60k",
-  "mhubert_base_vp_en_es_fr_it3",
-  "espnet_hubert_base_iter0",
-  "espnet_hubert_base_iter1",
-  "cvhubert",
-  "wavlablm_ek_40k",
-  "wavlablm_mk_40k",
-  "wavlablm_ms_40k",
-  "multires_hubert_base",
-  "multires_hubert_large",
+#   "xlsr_53",
+#   "xls_r_300m",
+#   "xls_r_1b",
+#   "xls_r_2b",
+#   "hubert",
+#   "hubert_base",
+#   "hubert_large_ll60k",
+#   "mhubert_base_vp_en_es_fr_it3",
+#   "espnet_hubert_custom",
+#   "espnet_hubert_base_iter0",
+#   "espnet_hubert_base_iter1",
+#   "espnet_hubert_custom",
+#   "wavlablm",
+#   "cvhubert",
+#   "wavlablm_ek_40k",
+#   "wavlablm_mk_40k",
+#   "wavlablm_ms_40k",
+#   "mr_hubert",
+#   "multires_hubert_base",
+#   "multires_hubert_large",
 #   "multires_hubert_multilingual_base",
 #   "multires_hubert_multilingual_large400k",
 #   "multires_hubert_multilingual_large600k",
+#   "distilhubert",
 #   "distilhubert_base",
+#   "hubert_mgr",
 #   "hubert_base_robust_mgr",
 #   "unispeech_sat",
 #   "unispeech_sat_base",
 #   "unispeech_sat_base_plus",
 #   "unispeech_sat_large",
+#   "wavlm",
 #   "wavlm_base",
 #   "wavlm_base_plus",
 #   "wavlm_large",
-#   "data2vec_base_960",
-#   "data2vec_large_ll60k",
+#   "data2vec",
 #   "ast",
-#   "ssast_frame_base",
-#   "ssast_patch_base",
-#   "mae_ast_frame",
-#   "mae_ast_patch",
-#   "byol_a_2048",
-#   "byol_a_1024",
-#   "byol_a_512",
-#   "byol_s_default",
-#   "byol_s_cvt",
-#   "byol_s_resnetish34"
+#   "ssast",
+#   "mae_ast",
+#   "byol_a",
+#   "byol_s",
 #   "vggish",
+#   "passt",
 #   "passt_base"
 ]
 
@@ -145,7 +141,7 @@ def get_subfolders(directory):
 
 # Function to process a speaker for a given model
 def process_speaker_for_model(model_name, model, speaker):
-    input_base_path = f"/data/Deep_Fake_Data/Raw_data/CODEC1/{speaker}/train"
+    input_base_path = f"/data/Deep_Fake_Data/Raw_data/CODEC2/{speaker}/train"
     deepfake_folders = get_subfolders(input_base_path)
 
     for folder in deepfake_folders:
@@ -155,7 +151,7 @@ def process_speaker_for_model(model_name, model, speaker):
             continue
 
         # Create the output directory similar to input audio directory
-        output_dir = os.path.join(f"/data/Deep_Fake_Data/Raw_data/Features_superb/CODEC1/{speaker}/train/{folder}/{model_name}")
+        output_dir = os.path.join(f"/data/Deep_Fake_Data/Raw_data/Features_superb/CODEC2/{speaker}/train/{folder}/{model_name}")
         os.makedirs(output_dir, exist_ok=True)
 
         # List all wave files in the current train folder
@@ -182,9 +178,9 @@ def process_speaker_for_model(model_name, model, speaker):
 # Main processing loop
 def main():
     # Directory containing speaker subfolders
-    directory_path = '/data/Deep_Fake_Data/Raw_data/CODEC1'
-    speakers = get_subfolders(directory_path)
-
+    directory_path = '/data/Deep_Fake_Data/Raw_data/CODEC2'
+    # speakers = get_subfolders(directory_path)
+    speakers = ["p282","p351"]
     # Use ThreadPoolExecutor to parallelize feature extraction
     for speaker in speakers:
         try:

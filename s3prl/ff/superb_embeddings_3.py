@@ -164,16 +164,19 @@ def process_speaker_for_model(model_name, model, speaker):
         # print(f"{model_name} processing: {folder}")
 
         for f in wave_files:
-            output_file_path = os.path.join(output_dir, f"{os.path.splitext(f)[0]}.pkl")
-            if not os.path.exists(output_file_path):
-                file_path = os.path.join(train_dir, f)
+            try:
+                output_file_path = os.path.join(output_dir, f"{os.path.splitext(f)[0]}.pkl")
+                if not os.path.exists(output_file_path):
+                    file_path = os.path.join(train_dir, f)
 
-                # Extract features
-                features = extract_s3prl_features(model, file_path)
+                    # Extract features
+                    features = extract_s3prl_features(model, file_path)
 
-                # Save features as a pickle file
-                with open(output_file_path, 'wb') as handle:
-                    pickle.dump(features, handle, protocol=pickle.HIGHEST_PROTOCOL)
+                    # Save features as a pickle file
+                    with open(output_file_path, 'wb') as handle:
+                        pickle.dump(features, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            except:
+                continue
             
 
 # Main processing loop

@@ -48,35 +48,35 @@ s3prl_model_names = [
 #   "decoar2",
 #   "wav2vec",
 #   "wav2vec_large",
-#   "vq_wav2vec_gumbel",
-#   "vq_wav2vec_kmeans",
-#   "discretebert",
-#   "vq_wav2vec_kmeans_roberta",
-#   "wav2vec2_base_960",
-#   "wav2vec2_large_960",
-#   "wav2vec2_large_ll60k",
-#   "wav2vec2_large_lv60_cv_swbd_fsh",
-#   "wav2vec2_conformer_relpos",
-#   "wav2vec2_conformer_rope",
-#   "wav2vec2_base_s2st_es_voxpopuli",
-#   "wav2vec2_base_s2st_en_librilight",
-#   "wav2vec2_conformer_large_s2st_es_voxpopuli",
-#   "wav2vec2_conformer_large_s2st_en_librilight",
-  "xlsr_53",
-  "xls_r_300m",
-  "xls_r_1b",
-  "xls_r_2b",
-  "hubert_base",
-  "hubert_large_ll60k",
-  "mhubert_base_vp_en_es_fr_it3",
-  "espnet_hubert_base_iter0",
-  "espnet_hubert_base_iter1",
-  "cvhubert",
-  "wavlablm_ek_40k",
-  "wavlablm_mk_40k",
-  "wavlablm_ms_40k",
-  "multires_hubert_base",
-  "multires_hubert_large",
+  "vq_wav2vec_gumbel",
+  "vq_wav2vec_kmeans",
+  "discretebert",
+  "vq_wav2vec_kmeans_roberta",
+  "wav2vec2_base_960",
+  "wav2vec2_large_960",
+  "wav2vec2_large_ll60k",
+  "wav2vec2_large_lv60_cv_swbd_fsh",
+  "wav2vec2_conformer_relpos",
+  "wav2vec2_conformer_rope",
+  "wav2vec2_base_s2st_es_voxpopuli",
+  "wav2vec2_base_s2st_en_librilight",
+  "wav2vec2_conformer_large_s2st_es_voxpopuli",
+  "wav2vec2_conformer_large_s2st_en_librilight",
+#   "xlsr_53",
+#   "xls_r_300m",
+#   "xls_r_1b",
+#   "xls_r_2b",
+#   "hubert_base",
+#   "hubert_large_ll60k",
+#   "mhubert_base_vp_en_es_fr_it3",
+#   "espnet_hubert_base_iter0",
+#   "espnet_hubert_base_iter1",
+#   "cvhubert",
+#   "wavlablm_ek_40k",
+#   "wavlablm_mk_40k",
+#   "wavlablm_ms_40k",
+#   "multires_hubert_base",
+#   "multires_hubert_large",
 #   "multires_hubert_multilingual_base",
 #   "multires_hubert_multilingual_large400k",
 #   "multires_hubert_multilingual_large600k",
@@ -145,7 +145,7 @@ def get_subfolders(directory):
 
 # Function to process a speaker for a given model
 def process_speaker_for_model(model_name, model, speaker):
-    input_base_path = f"/data/Deep_Fake_Data/Raw_data/CODEC1/{speaker}/train"
+    input_base_path = f"/data/Deep_Fake_Data/Raw_data/CODEC2/{speaker}/train"
     deepfake_folders = get_subfolders(input_base_path)
 
     for folder in deepfake_folders:
@@ -155,7 +155,7 @@ def process_speaker_for_model(model_name, model, speaker):
             continue
 
         # Create the output directory similar to input audio directory
-        output_dir = os.path.join(f"/data/Deep_Fake_Data/Raw_data/Features_superb/CODEC1/{speaker}/train/{folder}/{model_name}")
+        output_dir = os.path.join(f"/data/Deep_Fake_Data/Raw_data/Features_superb/CODEC2/{speaker}/train/{folder}/{model_name}")
         os.makedirs(output_dir, exist_ok=True)
 
         # List all wave files in the current train folder
@@ -182,9 +182,9 @@ def process_speaker_for_model(model_name, model, speaker):
 # Main processing loop
 def main():
     # Directory containing speaker subfolders
-    directory_path = '/data/Deep_Fake_Data/Raw_data/CODEC1'
-    speakers = get_subfolders(directory_path)
-
+    directory_path = '/data/Deep_Fake_Data/Raw_data/CODEC2'
+    # speakers = get_subfolders(directory_path)
+    speakers = ["p282","p351"]
     # Use ThreadPoolExecutor to parallelize feature extraction
     for speaker in speakers:
         try:

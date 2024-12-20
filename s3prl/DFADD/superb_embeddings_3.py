@@ -62,48 +62,48 @@ s3prl_model_names = [
 #   "wav2vec2_base_s2st_en_librilight",
 #   "wav2vec2_conformer_large_s2st_es_voxpopuli",
 #   "wav2vec2_conformer_large_s2st_en_librilight",
-  "xlsr_53",
-  "xls_r_300m",
-  "xls_r_1b",
-  "xls_r_2b",
-  "hubert_base",
-  "hubert_large_ll60k",
-  "mhubert_base_vp_en_es_fr_it3",
-  "espnet_hubert_base_iter0",
-  "espnet_hubert_base_iter1",
-  "cvhubert",
-  "wavlablm_ek_40k",
-  "wavlablm_mk_40k",
-  "wavlablm_ms_40k",
-  "multires_hubert_base",
-  "multires_hubert_large",
-#   "multires_hubert_multilingual_base",
-#   "multires_hubert_multilingual_large400k",
-#   "multires_hubert_multilingual_large600k",
-#   "distilhubert_base",
-#   "hubert_base_robust_mgr",
-#   "unispeech_sat",
-#   "unispeech_sat_base",
-#   "unispeech_sat_base_plus",
-#   "unispeech_sat_large",
-#   "wavlm_base",
-#   "wavlm_base_plus",
-#   "wavlm_large",
-#   "data2vec_base_960",
-#   "data2vec_large_ll60k",
-#   "ast",
-#   "ssast_frame_base",
-#   "ssast_patch_base",
-#   "mae_ast_frame",
-#   "mae_ast_patch",
-#   "byol_a_2048",
-#   "byol_a_1024",
-#   "byol_a_512",
-#   "byol_s_default",
-#   "byol_s_cvt",
-#   "byol_s_resnetish34"
-#   "vggish",
-#   "passt_base"
+#   "xlsr_53",
+#   "xls_r_300m",
+#   "xls_r_1b",
+#   "xls_r_2b",
+#   "hubert_base",
+#   "hubert_large_ll60k",
+#   "mhubert_base_vp_en_es_fr_it3",
+#   "espnet_hubert_base_iter0",
+#   "espnet_hubert_base_iter1",
+#   "cvhubert",
+#   "wavlablm_ek_40k",
+#   "wavlablm_mk_40k",
+#   "wavlablm_ms_40k",
+#   "multires_hubert_base",
+#   "multires_hubert_large",
+  "multires_hubert_multilingual_base",
+  "multires_hubert_multilingual_large400k",
+  "multires_hubert_multilingual_large600k",
+  "distilhubert_base",
+  "hubert_base_robust_mgr",
+  "unispeech_sat",
+  "unispeech_sat_base",
+  "unispeech_sat_base_plus",
+  "unispeech_sat_large",
+  "wavlm_base",
+  "wavlm_base_plus",
+  "wavlm_large",
+  "data2vec_base_960",
+  "data2vec_large_ll60k",
+  "ast",
+  "ssast_frame_base",
+  "ssast_patch_base",
+  "mae_ast_frame",
+  "mae_ast_patch",
+  "byol_a_2048",
+  "byol_a_1024",
+  "byol_a_512",
+  "byol_s_default",
+  "byol_s_cvt",
+  "byol_s_resnetish34",
+  "vggish",
+  "passt_base"
 ]
 
 # Load all S3PRL models once
@@ -145,7 +145,7 @@ def get_subfolders(directory):
 
 # Function to process a speaker for a given model
 def process_speaker_for_model(model_name, model, speaker):
-    input_base_path = f"/data/Deep_Fake_Data/Raw_data/CODEC1/{speaker}/train"
+    input_base_path = f"/data/Deep_Fake_Data/Raw_data/DFADD/{speaker}/train"
     deepfake_folders = get_subfolders(input_base_path)
 
     for folder in deepfake_folders:
@@ -155,7 +155,7 @@ def process_speaker_for_model(model_name, model, speaker):
             continue
 
         # Create the output directory similar to input audio directory
-        output_dir = os.path.join(f"/data/Deep_Fake_Data/Raw_data/Features_superb/CODEC1/{speaker}/train/{folder}/{model_name}")
+        output_dir = os.path.join(f"/data/Deep_Fake_Data/Raw_data/Features_superb/DFADD/{speaker}/train/{folder}/{model_name}")
         os.makedirs(output_dir, exist_ok=True)
 
         # List all wave files in the current train folder
@@ -164,25 +164,22 @@ def process_speaker_for_model(model_name, model, speaker):
         # print(f"{model_name} processing: {folder}")
 
         for f in wave_files:
-            try:
-                output_file_path = os.path.join(output_dir, f"{os.path.splitext(f)[0]}.pkl")
-                if not os.path.exists(output_file_path):
-                    file_path = os.path.join(train_dir, f)
+            output_file_path = os.path.join(output_dir, f"{os.path.splitext(f)[0]}.pkl")
+            if not os.path.exists(output_file_path):
+                file_path = os.path.join(train_dir, f)
 
-                    # Extract features
-                    features = extract_s3prl_features(model, file_path)
+                # Extract features
+                features = extract_s3prl_features(model, file_path)
 
-                    # Save features as a pickle file
-                    with open(output_file_path, 'wb') as handle:
-                        pickle.dump(features, handle, protocol=pickle.HIGHEST_PROTOCOL)
-            except:
-                continue
+                # Save features as a pickle file
+                with open(output_file_path, 'wb') as handle:
+                    pickle.dump(features, handle, protocol=pickle.HIGHEST_PROTOCOL)
             
 
 # Main processing loop
 def main():
     # Directory containing speaker subfolders
-    directory_path = '/data/Deep_Fake_Data/Raw_data/CODEC1'
+    directory_path = '/data/Deep_Fake_Data/Raw_data/DFADD'
     speakers = get_subfolders(directory_path)
 
     # Use ThreadPoolExecutor to parallelize feature extraction
