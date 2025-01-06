@@ -109,7 +109,7 @@ for model_name in s3prl_model_names:
     models_s3prl[model_name] = S3PRLUpstream(model_name).to(device).eval()
 
 # Feature extraction function for S3PRL
-def extract_s3prl_features(model, file_path):
+def extract_s3prl_features(model, file_path, use_featurizer=False):
     # Load the audio file
     waveform, sample_rate = torchaudio.load(file_path)
 
@@ -175,7 +175,11 @@ def process_speaker_for_model(model_name, model, speaker):
 # Main processing loop
 def main():
     # Directory containing speaker subfolders
-    directory_path = '/data/Deep_Fake_Data/Raw_data/DFADD'
+    dataset_name = 'DFADD'
+
+    data_base_path = '/data/Deep_Fake_Data/Raw_data'
+    
+    directory_path = os.path.join(data_base_path, dataset_name)
     speakers = get_subfolders(directory_path)
 
     # Use ThreadPoolExecutor to parallelize feature extraction
