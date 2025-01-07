@@ -172,8 +172,8 @@ def main():
     database = "CODEC2"
     output_directory = "/data/Deep_Fake_Data/Features"
     directory_path = os.path.join(base_directory, database)
-    # speakers = get_subfolders(directory_path)
-    speakers = ["p282"]
+    speakers = get_subfolders(directory_path)
+    # speakers = ["p225",  "p229",  "p233",  "p238",  "p243",  "p247",  "p251",  "p255",  "p259", "p263",  "p267",  "p271",  "p275",  "p279",  "p283",  "p287",  "p294",  "p299",  "p303",  "p307",  "p312" , "p316" , "p326",  "p334" , "p340",  "p347",  "p362",  "p376"]
     # Process one speaker at a time
     for speaker in speakers:
         # Break the model list into batches of 10
@@ -204,8 +204,6 @@ def main():
         print(f"Finished processing speaker: {speaker}")
 
 if __name__ == "__main__":
-    # Example usage:
-    # python script.py /path/to/output
     mp.set_start_method("spawn", force=True)
     import sys
     main()
